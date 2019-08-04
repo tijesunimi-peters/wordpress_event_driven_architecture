@@ -15,10 +15,7 @@ COPY . .
 
 RUN composer install
 
-RUN ls -al
-
-VOLUME ["./:/var/www/html/wp-content/plugins/tijes-plugin"]
+RUN ls -al ./vendor
 
 RUN composer dump-autoload -o
 
-# CMD ["composer install", "&&", "composer dump-autoload"]

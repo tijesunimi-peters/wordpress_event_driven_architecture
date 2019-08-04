@@ -55,9 +55,9 @@ services:
     networks: 
       - back-tier
     restart: on-failure
-    # working_dir: /var/www/html/wp-content/plugins/tijes-plugin
+    working_dir: /var/www/html/wp-content/plugins/tijes-plugin
     volumes:
-      - ./tijes-plugin/vendor:/var/www/html/wp-content/plugins/tijes-plugin/vendor
+      - ./:/var/www/html/wp-content/plugins/tijes-plugin
 
   rabbitmq_consumer:
     build: ./rabbitmq_consumer
