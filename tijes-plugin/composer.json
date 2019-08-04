@@ -1,0 +1,19 @@
+{
+    "name": "tijes/plugin",
+    "description": "This is an event driven plugin",
+    "type": "library",
+    "require": {
+        "php-amqplib/php-amqplib": "^2.9"
+    },
+    "autoload": {
+        "classmap": [
+            "./classes"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Tijesunimi Peters",
+            "email": "tijesunimi48@gmail.com"
+        }
+    ]
+}

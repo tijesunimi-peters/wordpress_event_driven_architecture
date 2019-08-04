@@ -1,0 +1,63 @@
+version: '3.3'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3.7-management
+    ports:
+      - "7000:15672"
+    environment:
+      - RABBITMQ_DEFAULT_USER=rabbitmquser
+      - RABBITMQ_DEFAULT_PASS=some_password
+    networks: 
+      - back-tier
+
+  db:
+    image: mysql:5.7
+    volumes:
+      - db_data:/var/lib/mysql
+    restart: on-failure
+    environment:
+      MYSQL_ROOT_PASSWORD: somewordpress
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    networks: 
+      - back-tier
+
+  wordpress:
+    depends_on:
+      - rabbitmq
+      - db
+    image: wordpress:latest
+    ports:
+      - "8000:80"
+    restart: on-failure
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_USER: rabbitmquser
+      RABBITMQ_PASSWORD: some_password
+    working_dir: /var/www/html
+    volumes:
+      - ./tijes-plugin:/var/www/html/wp-content/plugins/tijes-plugin
+    networks: 
+      - back-tier
+
+  rabbitmq_consumer:
+    build: ./rabbitmq_consumer
+    networks: 
+      - back-tier
+    depends_on:
+      - rabbitmq
+    tty: true
+    restart: always
+
+volumes:
+  db_data: {}
+  
+networks:
+  back-tier:
+    driver: bridge
