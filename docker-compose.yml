@@ -28,10 +28,15 @@ services:
     depends_on:
       - rabbitmq
       - db
+    networks: 
+      - back-tier
+    restart: on-failure
+    working_dir: /var/www/html
     image: wordpress:latest
     ports:
       - "8000:80"
     restart: on-failure
+    tty: true
     environment:
       WORDPRESS_DB_HOST: db:3306
       WORDPRESS_DB_USER: wordpress
@@ -40,11 +45,19 @@ services:
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USER: rabbitmquser
       RABBITMQ_PASSWORD: some_password
-    working_dir: /var/www/html
     volumes:
       - ./tijes-plugin:/var/www/html/wp-content/plugins/tijes-plugin
+
+  composer:
+    build:
+      context: ./tijes-plugin
+      dockerfile: ./Dockerfile
     networks: 
       - back-tier
+    restart: on-failure
+    # working_dir: /var/www/html/wp-content/plugins/tijes-plugin
+    volumes:
+      - ./tijes-plugin/vendor:/var/www/html/wp-content/plugins/tijes-plugin/vendor
 
   rabbitmq_consumer:
     build: ./rabbitmq_consumer
